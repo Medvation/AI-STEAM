@@ -1,8 +1,8 @@
 import time
-import cv2
 import threading
 import random
 from playsound import playsound
+import cv2
 import os
 
 # Base directory for assets
@@ -22,6 +22,7 @@ kill_sound = os.path.join(SOUNDS_DIR, 'kill.mp3')
 green_sound = os.path.join(SOUNDS_DIR, 'RLGLsong.mp3')
 
 # Variables
+GAME_DURATION = 10
 GAME_DURATION, RED_STATE_DURATION = 10, 1
 state, score, game_running = "green", 0, True
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -35,7 +36,7 @@ def green_music():
             time.sleep(random.randint(5, 10))  # Randomize green state duration
             state = "red"
 
-# Intro screen
+
 cv2.imshow('Squid Game', cv2.resize(intro, (0, 0), fx=0.5, fy=0.5))
 cv2.waitKey(3000)
 
