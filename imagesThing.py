@@ -30,22 +30,32 @@ class RedLightGreenLightGame:
         self.last_detection = None
         self.movement_threshold = 30
 
+        # Initialize camera first to get dimensions
         self.cap = cv2.VideoCapture(0)
+        ret, test_frame = self.cap.read()
+        if not ret:
+            raise ValueError("Failed to initialize camera")
+        self.camera_height, self.camera_width = test_frame.shape[:2]
 
         # Game state
         self.using_camera = False
         self.game_started = False
         self.current_frame = '4.png'
 
-        # Load frame images
-        self.frames = {
-            'start': cv2.imread(os.path.join('frames', '4.png')),
-            'win': cv2.imread(os.path.join('frames', '3.png')),
-            'lose': cv2.imread(os.path.join('frames', '2.png'))
+        # Load and resize frame images to match camera dimensions
+        self.frames = {}
+        frame_files = {
+            'start': os.path.join('frames', '4.png'),
+            'win': os.path.join('frames', '3.png'),
+            'lose': os.path.join('frames', '2.png')
         }
 
-        if any(frame is None for frame in self.frames.values()):
-            raise ValueError("Failed to load one or more frame images")
+        for key, path in frame_files.items():
+            frame = cv2.imread(path)
+            if frame is None:
+                raise ValueError(f"Failed to load frame image: {path}")
+            # Resize frame to match camera dimensions
+            self.frames[key] = cv2.resize(frame, (self.camera_width, self.camera_height))
 
         # Colors in BGR
         self.color_map = {
